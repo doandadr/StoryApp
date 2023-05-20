@@ -12,30 +12,30 @@ class SessionPreferences private constructor(private val dataStore: DataStore<Pr
 
     private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
     private val BEARER_TOKEN = stringPreferencesKey("bearer_token")
+    private val USER_NAME = stringPreferencesKey("name")
 
-    fun getIsLoggedIn(): Flow<Boolean> {
+
+    fun getUser(): Flow<UserEntity> {
         return dataStore.data.map { preferences ->
-            preferences[IS_LOGGED_IN] ?: false
-//            preferences[IS_LOGGED_IN] ?: true
+            UserEntity(
+                preferences[USER_NAME] ?: "",
+                preferences[IS_LOGGED_IN] ?: false,
+                preferences[BEARER_TOKEN] ?: "",
+            )
         }
     }
 
-    fun getBearerToken(): Flow<String> {
-        return dataStore.data.map { preferences ->
-            preferences[BEARER_TOKEN] ?: ""
-//            preferences[BEARER_TOKEN] ?: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLWt0UkJraTFLNjhORjB5TXUiLCJpYXQiOjE2ODMxNzE2NjN9.YgGQYTfb8k_S3JW0gbR0ySEsNfqqfHqTDhDpnF1zvA0"
-        }
-    }
-
-    suspend fun saveIsLoggedIn(isLoggedIn: Boolean) {
+    suspend fun saveUser(user: UserEntity) {
         dataStore.edit { preferences ->
-            preferences[IS_LOGGED_IN] = isLoggedIn
+            preferences[USER_NAME] = user.userName
+            preferences[IS_LOGGED_IN] = user.isLoggedIn
+            preferences[BEARER_TOKEN] = user.bearerToken
         }
     }
 
-    suspend fun saveBearerToken(bearerToken: String) {
-        dataStore.edit { preferences ->
-            preferences[BEARER_TOKEN] = bearerToken
+    suspend fun logout() {
+        dataStore.edit {
+            it.clear()
         }
     }
 
