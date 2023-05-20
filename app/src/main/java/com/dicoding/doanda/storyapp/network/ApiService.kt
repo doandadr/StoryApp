@@ -7,6 +7,7 @@ import retrofit2.http.*
 
 interface ApiService {
 
+    @FormUrlEncoded
     @POST("register")
     fun register(
         @Field("name") name: String,
@@ -14,6 +15,7 @@ interface ApiService {
         @Field("password") password: String,
     ): Call<RegisterResponse>
 
+    @FormUrlEncoded
     @POST("login")
     fun login(
         @Field("email") email: String,

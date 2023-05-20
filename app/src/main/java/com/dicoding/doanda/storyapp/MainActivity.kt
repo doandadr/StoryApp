@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
 
         // TODO observe model
         mainViewModel.isLoggedIn.observe(this) { isLoggedIn ->
-            val dummyIsLoggedIn = true
-            if (dummyIsLoggedIn) {
+//            val dummyIsLoggedIn = true
+            if (isLoggedIn) {
                 mainViewModel.getAllStories()
             } else {
                 // TODO intent to login

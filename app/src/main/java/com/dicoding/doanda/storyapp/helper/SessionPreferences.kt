@@ -15,15 +15,15 @@ class SessionPreferences private constructor(private val dataStore: DataStore<Pr
 
     fun getIsLoggedIn(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
-//            preferences[IS_LOGGED_IN] ?: false
-            preferences[IS_LOGGED_IN] ?: true
+            preferences[IS_LOGGED_IN] ?: false
+//            preferences[IS_LOGGED_IN] ?: true
         }
     }
 
     fun getBearerToken(): Flow<String> {
         return dataStore.data.map { preferences ->
-//            preferences[BEARER_TOKEN] ?: ""
-            preferences[BEARER_TOKEN] ?: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLWt0UkJraTFLNjhORjB5TXUiLCJpYXQiOjE2ODMxNzE2NjN9.YgGQYTfb8k_S3JW0gbR0ySEsNfqqfHqTDhDpnF1zvA0"
+            preferences[BEARER_TOKEN] ?: ""
+//            preferences[BEARER_TOKEN] ?: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLWt0UkJraTFLNjhORjB5TXUiLCJpYXQiOjE2ODMxNzE2NjN9.YgGQYTfb8k_S3JW0gbR0ySEsNfqqfHqTDhDpnF1zvA0"
         }
     }
 
