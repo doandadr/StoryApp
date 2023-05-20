@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.dicoding.doanda.storyapp.helper.SessionPreferences
+import com.dicoding.doanda.storyapp.helper.UserEntity
 import com.dicoding.doanda.storyapp.network.ApiConfig
 import com.dicoding.doanda.storyapp.network.Story
 import com.dicoding.doanda.storyapp.network.StoryDetailResponse
@@ -13,7 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class StoryDetailViewModel(private val pref: SessionPreferences,private val storyId: String):
+class StoryDetailViewModel(private val pref: SessionPreferences):
     ViewModel() {
 
     private val _story = MutableLiveData<Story?>()
@@ -22,19 +23,11 @@ class StoryDetailViewModel(private val pref: SessionPreferences,private val stor
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    val isLoggedIn: LiveData<Boolean> = pref.getIsLoggedIn().asLiveData()
-    val bearerToken: LiveData<String> = pref.getBearerToken().asLiveData()
+    fun getUser(): LiveData<UserEntity> = pref.getUser().asLiveData()
 
-    init {
-        if (isLoggedIn.value == true && bearerToken.value != null) {
-            loadStoryDetail(storyId)
-        }
-    }
-
-    private fun loadStoryDetail(storyId: String) {
+    fun loadStoryDetail(bearerToken: String, storyId: String) {
         _isLoading.value = true
-        val token = "Bearer " + bearerToken.value
-        val client = ApiConfig.getApiService().getStoryDetail(token, storyId)
+        val client = ApiConfig.getApiService().getStoryDetail(bearerToken, storyId)
         client.enqueue(object : Callback<StoryDetailResponse> {
             override fun onResponse(
                 call: Call<StoryDetailResponse>,

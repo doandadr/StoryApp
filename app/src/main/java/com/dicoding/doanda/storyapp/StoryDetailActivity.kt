@@ -18,10 +18,10 @@ import com.dicoding.doanda.storyapp.helper.StoryDetailViewModelFactory
 import com.dicoding.doanda.storyapp.models.StoryDetailViewModel
 import com.dicoding.doanda.storyapp.network.Story
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
 class StoryDetailActivity : AppCompatActivity() {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
     private lateinit var binding: ActivityStoryDetailBinding
     private lateinit var storyDetailViewModel: StoryDetailViewModel
 
@@ -38,7 +38,7 @@ class StoryDetailActivity : AppCompatActivity() {
 
         val storyId = intent.getStringExtra(EXTRA_LIST_STORY_ITEM)
         if (storyId != null) {
-            storyDetailViewModel = ViewModelProvider(this, StoryDetailViewModelFactory(pref, storyId))
+            storyDetailViewModel = ViewModelProvider(this, StoryDetailViewModelFactory(pref))
                 .get(StoryDetailViewModel::class.java)
         }
 
@@ -48,6 +48,13 @@ class StoryDetailActivity : AppCompatActivity() {
 
         storyDetailViewModel.isLoading.observe(this) {isLoading ->
             showLoading(isLoading)
+        }
+
+        storyDetailViewModel.getUser().observe(this) {user ->
+            if (user.isLoggedIn) {
+                if (storyId != null)
+                    storyDetailViewModel.loadStoryDetail(user.bearerToken, storyId)
+            }
         }
     }
 
