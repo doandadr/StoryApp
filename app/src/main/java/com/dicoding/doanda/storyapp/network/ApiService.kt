@@ -2,6 +2,7 @@ package com.dicoding.doanda.storyapp.network
 
 import com.dicoding.doanda.storyapp.AllStoriesResponse
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -22,20 +23,19 @@ interface ApiService {
         @Field("password") password: String,
     ): Call<LoginResponse>
 
-    @Headers("Content-type: multipart/form-data")
     @Multipart
     @POST("stories")
-    fun addNewStory(
+    fun uploadStory(
         @Header("Authorization") token: String, // Bearer + token
-        @Field("description") description: String,
-        @Part("file") file: MultipartBody.Part,
-        @Field("lat") lat: Float,
-        @Field("lon") lon: Float,
-    ): Call<AddNewStoryResponse>
+        @Part("description") description: RequestBody,
+        @Part file: MultipartBody.Part,
+        @Part("lat") lat: Float?,
+        @Part("lon") lon: Float?,
+    ): Call<UploadStoryResponse>
 
     @GET("stories")
     fun getAllStories(
-        @Header("Authorization") token: String?, // Bearer + token
+        @Header("Authorization") token: String, // Bearer + token
         @Query("page") page: Int?,
         @Query("size") size: Int?,
         @Query("location") location: Boolean?,
@@ -46,7 +46,5 @@ interface ApiService {
         @Header("Authorization") token: String, // Bearer + token
         @Path("id") id : String,
     ): Call<StoryDetailResponse>
-
-
 }
 
