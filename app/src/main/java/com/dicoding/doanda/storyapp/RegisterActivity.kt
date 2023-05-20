@@ -2,22 +2,15 @@ package com.dicoding.doanda.storyapp
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.doanda.storyapp.databinding.ActivityRegisterBinding
 import com.dicoding.doanda.storyapp.helper.RegisterViewModelFactory
-import com.dicoding.doanda.storyapp.helper.SessionPreferences
 import com.dicoding.doanda.storyapp.models.RegisterViewModel
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -29,8 +22,7 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val pref = SessionPreferences.getInstance(dataStore)
-        registerViewModel = ViewModelProvider(this, RegisterViewModelFactory(pref))
+        registerViewModel = ViewModelProvider(this, RegisterViewModelFactory())
             .get(RegisterViewModel::class.java)
 
         registerViewModel.registerResponse.observe(this) { registerResponse ->

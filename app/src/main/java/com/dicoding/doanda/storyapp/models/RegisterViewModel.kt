@@ -4,14 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.dicoding.doanda.storyapp.helper.SessionPreferences
 import com.dicoding.doanda.storyapp.network.ApiConfig
 import com.dicoding.doanda.storyapp.network.RegisterResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RegisterViewModel(private val pref: SessionPreferences) : ViewModel() {
+class RegisterViewModel() : ViewModel() {
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
