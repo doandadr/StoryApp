@@ -5,36 +5,29 @@ import androidx.lifecycle.*
 import com.dicoding.doanda.storyapp.AllStoriesResponse
 import com.dicoding.doanda.storyapp.ListStoryItem
 import com.dicoding.doanda.storyapp.helper.SessionPreferences
+import com.dicoding.doanda.storyapp.helper.UserEntity
 import com.dicoding.doanda.storyapp.network.ApiConfig
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainViewModel(private val pref : SessionPreferences) : ViewModel() {
 
-    // TODO setup api obj
     private val _listStory = MutableLiveData<List<ListStoryItem?>?>()
     val listStory: LiveData<List<ListStoryItem?>?> = _listStory
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    val isLoggedIn: LiveData<Boolean> = pref.getIsLoggedIn().asLiveData()
-    val bearerToken: LiveData<String> = pref.getBearerToken().asLiveData()
+    fun getUser(): LiveData<UserEntity> = pref.getUser().asLiveData()
 
-    init {
-        if (isLoggedIn.value == true) {
-            getAllStories()
-        }
-    }
-
-    fun getAllStories() {
+    fun getAllStories(bearerToken: String) {
         _isLoading.value = true
-
-//            val client = ApiConfig.getApiService().getAllStories(bearerToken.value, null, null, null)
-        val dummyBearerToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLWt0UkJraTFLNjhORjB5TXUiLCJpYXQiOjE2ODMxNzE2NjN9.YgGQYTfb8k_S3JW0gbR0ySEsNfqqfHqTDhDpnF1zvA0"
-        val client = ApiConfig.getApiService().getAllStories(dummyBearerToken, 1, 10, null)
-//            val client = ApiConfig.getApiService().getAllStories(bearerToken.value, 1, 10, null)
+        val client = ApiConfig.getApiService().getAllStories(bearerToken, null, null, null)
+//        val client = ApiConfig.getApiService().getAllStories(bearerToken.value, 1, 10, null)
+//        val dummyBearerToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLWt0UkJraTFLNjhORjB5TXUiLCJpYXQiOjE2ODMxNzE2NjN9.YgGQYTfb8k_S3JW0gbR0ySEsNfqqfHqTDhDpnF1zvA0"
+//        val client = ApiConfig.getApiService().getAllStories(dummyBearerToken, 1, 10, null)
         client.enqueue(object : Callback<AllStoriesResponse> {
             override fun onResponse(
                 call: Call<AllStoriesResponse>,
@@ -61,6 +54,11 @@ class MainViewModel(private val pref : SessionPreferences) : ViewModel() {
 
     }
 
+    fun logout() {
+        viewModelScope.launch {
+            pref.logout()
+        }
+    }
     companion object {
         private const val TAG = "MainViewModel"
     }

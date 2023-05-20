@@ -2,12 +2,14 @@
     <string name="app_name">Story App</string>
     <string name="login_button">Login</string>
     <string name="register_button">Register</string>
-    <string name="username">username</string>
+    <string name="username">Name</string>
     <string name="story_image">story image</string>
-    <string name="story_detail">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+    <string name="story_detail">Story detail</string>
     <string name="story_edittext">Enter your story</string>
     <string name="story_submit">Submit Story</string>
     <string name="add_story">add story</string>
     <string name="login_register_button">Or Register Instead</string>
     <string name="register_login_button">Have an account? Login</string>
+    <string name="check_out_new_stories">%1$s, Check out new stories</string>
+    <string name="welcome">Welcome</string>
 </resources>

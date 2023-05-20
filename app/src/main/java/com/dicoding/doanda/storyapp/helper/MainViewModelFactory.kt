@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.dicoding.doanda.storyapp.models.MainViewModel
 
 class MainViewModelFactory(private val pref: SessionPreferences) :
-ViewModelProvider.NewInstanceFactory() {
+    ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

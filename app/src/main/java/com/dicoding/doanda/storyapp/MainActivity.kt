@@ -17,33 +17,31 @@ import com.dicoding.doanda.storyapp.helper.SessionPreferences
 import com.dicoding.doanda.storyapp.helper.StoryListAdapter
 import com.dicoding.doanda.storyapp.models.MainViewModel
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
 class MainActivity : AppCompatActivity() {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
     private lateinit var binding: ActivityMainBinding
     private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        // TODO set theme
+
         setContentView(binding.root)
 
-        // TODO get set preferences login status
         val pref = SessionPreferences.getInstance(dataStore)
         mainViewModel = ViewModelProvider(this, MainViewModelFactory(pref))
             .get(MainViewModel::class.java)
 
-        // TODO observe model
-        mainViewModel.isLoggedIn.observe(this) { isLoggedIn ->
-//            val dummyIsLoggedIn = true
-            if (isLoggedIn) {
-                mainViewModel.getAllStories()
+        mainViewModel.getUser().observe(this) { user ->
+            if (user.isLoggedIn) {
+                binding.tvMainDesc.text = getString(R.string.check_out_new_stories, user.userName)
+                mainViewModel.getAllStories(user.bearerToken)
             } else {
-                // TODO intent to login
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(intent)
+                finish()
             }
         }
 
@@ -59,14 +57,21 @@ class MainActivity : AppCompatActivity() {
             showLoading(isLoading)
         }
 
+        binding.ibLogout.setOnClickListener {
+            mainViewModel.logout()
+        }
+
+        binding.fabAddStory.setOnClickListener {
+            startActivity(Intent(this@MainActivity, AddStoryActivity::class.java))
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {
 
         if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
+            binding.pbMain.visibility = View.VISIBLE
         } else {
-            binding.progressBar.visibility = View.GONE
+            binding.pbMain.visibility = View.GONE
         }
     }
 
@@ -84,4 +89,6 @@ class MainActivity : AppCompatActivity() {
             })
         }
     }
+
+
 }
