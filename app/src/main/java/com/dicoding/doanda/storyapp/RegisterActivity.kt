@@ -1,9 +1,12 @@
 package com.dicoding.doanda.storyapp
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -14,9 +17,10 @@ import com.dicoding.doanda.storyapp.helper.RegisterViewModelFactory
 import com.dicoding.doanda.storyapp.helper.SessionPreferences
 import com.dicoding.doanda.storyapp.models.RegisterViewModel
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
+
 class RegisterActivity : AppCompatActivity() {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var registerViewModel: RegisterViewModel
 
@@ -38,20 +42,19 @@ class RegisterActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             } else {
-                Toast.makeText(this@RegisterActivity, registerResponse?.message ?: "error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@RegisterActivity, registerResponse?.message ?: "Email or password invalid", Toast.LENGTH_SHORT).show()
             }
         }
-        // cal' register api get response
-        // if successful set preferences, intent go to login
-        // set button to login
+
+        registerViewModel.isLoading.observe(this) { isLoading ->
+            showLoading(isLoading)
+        }
 
         binding.btnRegister.setOnClickListener { view ->
             if (view.id == R.id.btn_register) {
-                // get fields
                 val name = binding.edRegisterName.text.toString()
                 val email = binding.edRegisterEmail.text.toString()
                 val password = binding.edRegisterPassword.text.toString()
-                // verify fields TODO in custom edittext
 
                 registerViewModel.registerRequest(name, email, password)
             }
@@ -64,6 +67,46 @@ class RegisterActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }
+        }
+
+        binding.btnToLogin.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }
+
+        playAnimation()
+    }
+
+    private fun playAnimation() {
+        val title = ObjectAnimator.ofFloat(binding.tvRegisterTitle, View.ALPHA, 1f).setDuration(500)
+        val desc = ObjectAnimator.ofFloat(binding.tvRegisterDesc, View.ALPHA, 1f).setDuration(500)
+        val name = ObjectAnimator.ofFloat(binding.edRegisterName, View.ALPHA, 1f).setDuration(500)
+        val email = ObjectAnimator.ofFloat(binding.edRegisterEmail, View.ALPHA, 1f).setDuration(500)
+        val password = ObjectAnimator.ofFloat(binding.edRegisterPassword, View.ALPHA, 1f).setDuration(500)
+        val btnRegister = ObjectAnimator.ofFloat(binding.btnRegister, View.ALPHA, 1f).setDuration(500)
+        val btnToLogin = ObjectAnimator.ofFloat(binding.btnToLogin, View.ALPHA, 1f).setDuration(500)
+
+        AnimatorSet().apply {
+            playSequentially(
+                title,
+                desc,
+                name,
+                email,
+                password,
+                btnRegister,
+                btnToLogin,
+            )
+            startDelay = 500
+        }.start()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.pbRegister.visibility = View.VISIBLE
+        } else {
+            binding.pbRegister.visibility = View.GONE
         }
     }
 }
