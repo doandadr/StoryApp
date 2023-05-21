@@ -12,4 +12,15 @@
     <string name="register_login_button">Have an account? Login</string>
     <string name="check_out_new_stories">%1$s, Check out new stories</string>
     <string name="welcome">Welcome</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_in_desc">Please enter your email and password</string>
+    <string name="hint_name">Name</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="sign_up_desc">Enter your credentials to join</string>
+    <string name="image_preview_contentdesc">photo to be added</string>
+    <string name="add_location_info">Add location info</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
 </resources>

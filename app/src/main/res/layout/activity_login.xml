@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
+    tools:context=".ui.login.LoginActivity"
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
@@ -20,26 +20,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo_storyapp" />
 
-    <com.dicoding.doanda.storyapp.helper.EmailEditText
+    <com.dicoding.doanda.storyapp.ui.customview.EmailEditText
         android:id="@+id/ed_login_email"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="22dp"
         android:layout_marginEnd="16dp"
-        android:hint="Email"
+        android:hint="@string/hint_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_login_desc" />
 
-    <com.dicoding.doanda.storyapp.helper.PasswordEditText
+    <com.dicoding.doanda.storyapp.ui.customview.PasswordEditText
         android:id="@+id/ed_login_password"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:hint="Password"
+        android:hint="@string/hint_password"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
-        android:text="SIGN IN"
+        android:text="@string/sign_in"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_login_logo" />
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Please enter your email and password"
+        android:text="@string/sign_in_desc"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_login_title" />
