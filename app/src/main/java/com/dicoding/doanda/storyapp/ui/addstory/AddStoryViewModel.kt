@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
-import com.dicoding.doanda.storyapp.ui.adapter.UserEntity
+import com.dicoding.doanda.storyapp.data.source.local.UserEntity
 import com.dicoding.doanda.storyapp.data.source.remote.ApiConfig
 import com.dicoding.doanda.storyapp.data.response.UploadStoryResponse
 import okhttp3.MultipartBody

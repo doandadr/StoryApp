@@ -3,7 +3,7 @@ package com.dicoding.doanda.storyapp.ui.login
 import android.util.Log
 import androidx.lifecycle.*
 import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
-import com.dicoding.doanda.storyapp.ui.adapter.UserEntity
+import com.dicoding.doanda.storyapp.data.source.local.UserEntity
 import com.dicoding.doanda.storyapp.data.source.remote.ApiConfig
 import com.dicoding.doanda.storyapp.data.response.LoginResponse
 import kotlinx.coroutines.launch

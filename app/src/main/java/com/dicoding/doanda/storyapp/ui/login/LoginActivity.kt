@@ -16,8 +16,9 @@ import com.dicoding.doanda.storyapp.R
 import com.dicoding.doanda.storyapp.ui.register.RegisterActivity
 import com.dicoding.doanda.storyapp.databinding.ActivityLoginBinding
 import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
-import com.dicoding.doanda.storyapp.ui.adapter.UserEntity
+import com.dicoding.doanda.storyapp.data.source.local.UserEntity
 import com.dicoding.doanda.storyapp.ui.story.StoryActivity
+import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
@@ -32,7 +33,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val pref = SessionPreferences.getInstance(dataStore)
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory(pref))
+        loginViewModel = ViewModelProvider(this, ViewModelFactory(pref))
             .get(LoginViewModel::class.java)
 
         loginViewModel.loginResponse.observe(this) { loginResponse ->

@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.dicoding.doanda.storyapp.databinding.ActivityAddStoryBinding
 import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
 import com.dicoding.doanda.storyapp.ui.story.StoryActivity
+import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -60,7 +61,7 @@ class AddStoryActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val pref = SessionPreferences.getInstance(dataStore)
-        addStoryViewModel = ViewModelProvider(this, AddStoryViewModelFactory(pref))
+        addStoryViewModel = ViewModelProvider(this, ViewModelFactory(pref))
             .get(AddStoryViewModel::class.java)
 
         if (!getPermissionStatus()) {
@@ -89,6 +90,11 @@ class AddStoryActivity : AppCompatActivity() {
             }
         }
         binding.buttonAdd.setOnClickListener { uploadStory() }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun capturePhoto() {

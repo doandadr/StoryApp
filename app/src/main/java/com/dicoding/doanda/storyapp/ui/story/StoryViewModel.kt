@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import com.dicoding.doanda.storyapp.data.response.AllStoriesResponse
 import com.dicoding.doanda.storyapp.data.response.ListStoryItem
 import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
-import com.dicoding.doanda.storyapp.ui.adapter.UserEntity
+import com.dicoding.doanda.storyapp.data.source.local.UserEntity
 import com.dicoding.doanda.storyapp.data.source.remote.ApiConfig
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -57,6 +57,6 @@ class StoryViewModel(private val pref : SessionPreferences) : ViewModel() {
         }
     }
     companion object {
-        private const val TAG = "MainViewModel"
+        private const val TAG = "StoryViewModel"
     }
 }

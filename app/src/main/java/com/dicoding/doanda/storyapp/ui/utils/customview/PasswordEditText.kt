@@ -1,4 +1,4 @@
-package com.dicoding.doanda.storyapp.ui.customview
+package com.dicoding.doanda.storyapp.ui.utils.customview
 
 import android.content.Context
 import android.graphics.Canvas

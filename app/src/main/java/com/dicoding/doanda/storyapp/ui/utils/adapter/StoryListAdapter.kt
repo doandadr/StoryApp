@@ -1,4 +1,4 @@
-package com.dicoding.doanda.storyapp.ui.adapter
+package com.dicoding.doanda.storyapp.ui.utils.adapter
 
 import android.view.LayoutInflater
 import android.view.View

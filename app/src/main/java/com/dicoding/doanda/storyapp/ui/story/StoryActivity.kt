@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -15,10 +16,11 @@ import com.dicoding.doanda.storyapp.*
 import com.dicoding.doanda.storyapp.data.response.ListStoryItem
 import com.dicoding.doanda.storyapp.databinding.ActivityStoryBinding
 import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
-import com.dicoding.doanda.storyapp.ui.adapter.StoryListAdapter
+import com.dicoding.doanda.storyapp.ui.utils.adapter.StoryListAdapter
 import com.dicoding.doanda.storyapp.ui.addstory.AddStoryActivity
 import com.dicoding.doanda.storyapp.ui.login.LoginActivity
 import com.dicoding.doanda.storyapp.ui.storydetail.StoryDetailActivity
+import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
@@ -34,8 +36,13 @@ class StoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val pref = SessionPreferences.getInstance(dataStore)
-        storyViewModel = ViewModelProvider(this, StoryViewModelFactory(pref))
+        storyViewModel = ViewModelProvider(this, ViewModelFactory(pref))
             .get(StoryViewModel::class.java)
+
+        val layoutManager = LinearLayoutManager(this)
+        binding.rvStories.layoutManager = layoutManager
+        val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
+        binding.rvStories.addItemDecoration(itemDecoration)
 
         storyViewModel.getUser().observe(this) { user ->
             if (user.isLoggedIn) {
@@ -48,11 +55,6 @@ class StoryActivity : AppCompatActivity() {
             }
         }
 
-        val layoutManager = LinearLayoutManager(this)
-        binding.rvStories.layoutManager = layoutManager
-        val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
-        binding.rvStories.addItemDecoration(itemDecoration)
-
         storyViewModel.listStory.observe(this) { listStory ->
             setStoryListData(listStory)
         }
@@ -62,6 +64,10 @@ class StoryActivity : AppCompatActivity() {
 
         binding.ibLogout.setOnClickListener {
             storyViewModel.logout()
+        }
+
+        binding.ibMaps.setOnClickListener {
+            Toast.makeText(this@StoryActivity, "Coming Soon!", Toast.LENGTH_SHORT).show()
         }
 
         binding.fabAddStory.setOnClickListener {

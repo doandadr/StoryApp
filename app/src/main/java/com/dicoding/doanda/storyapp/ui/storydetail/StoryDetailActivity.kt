@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.dicoding.doanda.storyapp.databinding.ActivityStoryDetailBinding
 import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
 import com.dicoding.doanda.storyapp.data.response.Story
+import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
@@ -36,7 +37,7 @@ class StoryDetailActivity : AppCompatActivity() {
 
         val storyId = intent.getStringExtra(EXTRA_LIST_STORY_ITEM)
         if (storyId != null) {
-            storyDetailViewModel = ViewModelProvider(this, StoryDetailViewModelFactory(pref))
+            storyDetailViewModel = ViewModelProvider(this, ViewModelFactory(pref))
                 .get(StoryDetailViewModel::class.java)
         }
 
@@ -54,6 +55,11 @@ class StoryDetailActivity : AppCompatActivity() {
                     storyDetailViewModel.loadStoryDetail(user.bearerToken, storyId)
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun setStoryDetail(story: Story?) {
