@@ -5,7 +5,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -19,6 +18,7 @@ import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
 import com.dicoding.doanda.storyapp.ui.utils.adapter.StoryListAdapter
 import com.dicoding.doanda.storyapp.ui.addstory.AddStoryActivity
 import com.dicoding.doanda.storyapp.ui.login.LoginActivity
+import com.dicoding.doanda.storyapp.ui.maps.MapsActivity
 import com.dicoding.doanda.storyapp.ui.storydetail.StoryDetailActivity
 import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 
@@ -67,7 +67,7 @@ class StoryActivity : AppCompatActivity() {
         }
 
         binding.ibMaps.setOnClickListener {
-            Toast.makeText(this@StoryActivity, "Coming Soon!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this@StoryActivity, MapsActivity::class.java))
         }
 
         binding.fabAddStory.setOnClickListener {

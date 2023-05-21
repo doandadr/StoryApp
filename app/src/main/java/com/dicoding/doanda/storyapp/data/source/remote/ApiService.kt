@@ -30,7 +30,7 @@ interface ApiService {
     @Multipart
     @POST("stories")
     fun uploadStory(
-        @Header("Authorization") token: String, // Bearer + token
+        @Header("Authorization") token: String, 
         @Part("description") description: RequestBody,
         @Part file: MultipartBody.Part,
         @Part("lat") lat: Float?,
@@ -39,15 +39,21 @@ interface ApiService {
 
     @GET("stories")
     fun getAllStories(
-        @Header("Authorization") token: String, // Bearer + token
+        @Header("Authorization") token: String, 
         @Query("page") page: Int?,
         @Query("size") size: Int?,
-        @Query("location") location: Boolean?,
+        @Query("location") location: Int?,
+    ): Call<AllStoriesResponse>
+
+    @GET("stories")
+    fun getAllStoriesLocation(
+        @Header("Authorization") token: String, 
+        @Query("location") location: Int,
     ): Call<AllStoriesResponse>
 
     @GET("stories/{id}")
     fun getStoryDetail(
-        @Header("Authorization") token: String, // Bearer + token
+        @Header("Authorization") token: String, 
         @Path("id") id : String,
     ): Call<StoryDetailResponse>
 }

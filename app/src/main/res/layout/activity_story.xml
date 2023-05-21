@@ -68,13 +68,22 @@
     <ImageButton
         android:id="@+id/ib_logout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_logout" />
 
+    <ImageButton
+        android:id="@+id/ib_maps"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/ib_logout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_map" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
