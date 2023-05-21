@@ -1,4 +1,4 @@
-package com.dicoding.doanda.storyapp.ui.adapter
+package com.dicoding.doanda.storyapp.data.source.local
 
 data class UserEntity(
     val userName: String,
