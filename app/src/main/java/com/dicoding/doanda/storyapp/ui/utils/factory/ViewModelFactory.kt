@@ -26,8 +26,8 @@ class ViewModelFactory(private val pref: SessionPreferences) :
                 RegisterViewModel() as T
             modelClass.isAssignableFrom(AddStoryViewModel::class.java) ->
                 AddStoryViewModel(pref) as T
-//            modelClass.isAssignableFrom(MapsViewModel::class.java) ->
-//                MapsViewModel(pref) as T
+            modelClass.isAssignableFrom(MapsViewModel::class.java) ->
+                MapsViewModel(pref) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
     }
