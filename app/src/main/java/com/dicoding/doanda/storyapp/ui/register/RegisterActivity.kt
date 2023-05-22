@@ -54,7 +54,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 is Result.Loading -> showLoading(true)
                 is Result.Error -> {
-                    Toast.makeText(this@RegisterActivity, result.error, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RegisterActivity, "Email or password invalid", Toast.LENGTH_SHORT).show()
                     showLoading(false)
                 }
             }

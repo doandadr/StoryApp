@@ -57,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 is Result.Loading -> showLoading(true)
                 is Result.Error -> {
-                    Toast.makeText(this@LoginActivity, result.error, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Email or password incorrect", Toast.LENGTH_SHORT).show()
                     showLoading(false)
                 }
             }
