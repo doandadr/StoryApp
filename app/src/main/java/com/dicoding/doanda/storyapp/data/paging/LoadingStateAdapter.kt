@@ -27,7 +27,6 @@ class LoadingStateAdapter(private val retry: () -> Unit)
         }
     }
 
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         loadState: LoadState

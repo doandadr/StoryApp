@@ -17,7 +17,6 @@ import com.dicoding.doanda.storyapp.ui.storydetail.StoryDetailActivity
 class StoryAdapter
     : PagingDataAdapter<ListStoryItem, StoryAdapter.StoryViewHolder>(DIFF_CALLBACK)
 {
-
     class StoryViewHolder(private val binding: ItemStoryBinding)
         : RecyclerView.ViewHolder(binding.root) {
             fun bind(item: ListStoryItem) {

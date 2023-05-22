@@ -102,10 +102,10 @@ class AddStoryActivity : AppCompatActivity() {
         }
     }
 
-    fun createTempFile(context: Context): File =
+    private fun createTempFile(context: Context): File =
         File.createTempFile(timeStamp, ".jpg", context.getExternalFilesDir(Environment.DIRECTORY_PICTURES))
 
-    val timeStamp: String = SimpleDateFormat(
+    private val timeStamp: String = SimpleDateFormat(
         FILENAME_FORMAT,
         Locale.ENGLISH
     ).format(System.currentTimeMillis())
@@ -144,7 +144,7 @@ class AddStoryActivity : AppCompatActivity() {
         }
 
     }
-    fun reduceImageSize(file: File): File {
+    private fun reduceImageSize(file: File): File {
         val bitmap = BitmapFactory.decodeFile(file.path)
         var compressQuality = 100
         var streamLength: Int

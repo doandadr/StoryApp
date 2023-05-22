@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
+import com.dicoding.doanda.storyapp.R
 
 class PasswordEditText : AppCompatEditText {
 
@@ -30,7 +31,7 @@ class PasswordEditText : AppCompatEditText {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (text.toString().length < 8) {
-                    error = "Password must be at least 8 characters"
+                    error = context.getString(R.string.password_warning)
                 } else {
                     error = null
                 }

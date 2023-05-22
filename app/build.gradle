@@ -22,7 +22,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "API_URL", "\"https://story-api.dicoding.dev/v1/\""
+        }
         release {
+            buildConfigField "String", "API_URL", "\"https://story-api.dicoding.dev/v1/\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
