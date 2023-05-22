@@ -57,15 +57,13 @@ class StoryRepository (
         pref.logout()
     }
 
-    fun getAllStories(
-        token: String,
-    ) : LiveData<PagingData<ListStoryItem>> {
+    fun getAllStories(): LiveData<PagingData<ListStoryItem>> {
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
                 pageSize = 5
             ),
-            remoteMediator = StoryRemoteMediator(database, apiService, token),
+            remoteMediator = StoryRemoteMediator(database, apiService, pref),
             pagingSourceFactory = {
                 database.storyDao().getAllStories()
             }
@@ -100,8 +98,8 @@ class StoryRepository (
         token: String,
         description: RequestBody,
         file: MultipartBody.Part,
-        lat: Float?,
-        lon: Float?,
+        lat: Double?,
+        lon: Double?,
     ) : LiveData<Result<UploadStoryResponse>> =
     liveData {
         emit(Result.Loading)

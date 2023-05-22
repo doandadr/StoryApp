@@ -12,8 +12,8 @@ class StoryViewModel(private val repo: StoryRepository) : ViewModel() {
     fun getUser(): LiveData<UserEntity> =
         repo.getUser()
 
-    fun getAllStories(token: String) : LiveData<PagingData<ListStoryItem>> =
-        repo.getAllStories(token).cachedIn(viewModelScope)
+    fun getAllStories() : LiveData<PagingData<ListStoryItem>> =
+        repo.getAllStories().cachedIn(viewModelScope)
 
     fun logout() {
         viewModelScope.launch {

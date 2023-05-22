@@ -15,7 +15,7 @@ class AddStoryViewModel(private val repo: StoryRepository) : ViewModel() {
         token: String,
         description: RequestBody,
         file: MultipartBody.Part,
-        lat: Float?,
-        lon: Float?
+        lat: Double?,
+        lon: Double?
     ) = repo.uploadStory(token, description, file, lat, lon)
 }

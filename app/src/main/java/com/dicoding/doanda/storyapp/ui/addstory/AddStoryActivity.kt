@@ -41,8 +41,8 @@ class AddStoryActivity : AppCompatActivity() {
     private val addStoryViewModel by viewModels<AddStoryViewModel> { ViewModelFactory.getInstance(this) }
 
     private var imageFile: File? = null
-    private var lat: Float? = null
-    private var lon:  Float? = null
+    private var lat: Double? = null
+    private var lon:  Double? = null
     private var bearerToken: String? = null
     private lateinit var photoPath: String
     private lateinit var fusedLocProvider: FusedLocationProviderClient
@@ -164,8 +164,8 @@ class AddStoryActivity : AppCompatActivity() {
             fusedLocProvider = LocationServices.getFusedLocationProviderClient(this)
             fusedLocProvider.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
-                    lat = location.latitude.toFloat()
-                    lon = location.longitude.toFloat()
+                    lat = location.latitude
+                    lon = location.longitude
                     Toast.makeText(this, "Location saved", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this, "Location not saved", Toast.LENGTH_SHORT).show()

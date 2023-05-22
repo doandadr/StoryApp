@@ -55,7 +55,7 @@ class StoryActivity : AppCompatActivity() {
                         adapter.retry()
                     }
                 )
-                storyViewModel.getAllStories(user.bearerToken).observe(this) {
+                storyViewModel.getAllStories().observe(this) {
                     adapter.submitData(lifecycle, it)
                 }
 

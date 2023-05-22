@@ -8,15 +8,16 @@ import androidx.room.withTransaction
 import com.dicoding.doanda.storyapp.data.response.partials.ListStoryItem
 import com.dicoding.doanda.storyapp.data.source.database.RemoteKeys
 import com.dicoding.doanda.storyapp.data.source.database.StoryDatabase
+import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
 import com.dicoding.doanda.storyapp.data.source.remote.ApiService
+import kotlinx.coroutines.flow.first
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 @OptIn(ExperimentalPagingApi::class)
 class StoryRemoteMediator(
     private val database: StoryDatabase,
     private val apiService: ApiService,
-//    private val pref: SessionPreferences,
-    private val bearerToken: String,
+    private val pref: SessionPreferences,
 ) : RemoteMediator<Int, ListStoryItem>() {
 
     private companion object {
@@ -51,8 +52,7 @@ class StoryRemoteMediator(
         }
 
         try {
-//            val token = pref.getUser().first().bearerToken
-            val token = bearerToken
+            val token = pref.getUser().first().bearerToken
             val responseData = apiService.getAllStories(token, page, state.config.pageSize, null)
 
             if (responseData.listStory != null) {

@@ -6,6 +6,9 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "story")
 data class ListStoryItem(
+	@PrimaryKey
+	@field:SerializedName("id")
+	val id: String,
 
 	@field:SerializedName("photoUrl")
 	val photoUrl: String? = null,
@@ -19,13 +22,9 @@ data class ListStoryItem(
 	@field:SerializedName("description")
 	val description: String? = null,
 
-	@field:SerializedName("lon")
-	val lon: Float? = null,
-
-	@PrimaryKey
-	@field:SerializedName("id")
-	val id: String,
-
 	@field:SerializedName("lat")
-	val lat: Float? = null
+	val lat: Double? = null,
+
+	@field:SerializedName("lon")
+	val lon: Double? = null,
 )
