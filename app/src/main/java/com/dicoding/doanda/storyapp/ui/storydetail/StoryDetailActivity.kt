@@ -10,7 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.dicoding.doanda.storyapp.data.repository.Result
-import com.dicoding.doanda.storyapp.data.response.Story
+import com.dicoding.doanda.storyapp.data.response.partials.Story
 import com.dicoding.doanda.storyapp.databinding.ActivityStoryDetailBinding
 import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 

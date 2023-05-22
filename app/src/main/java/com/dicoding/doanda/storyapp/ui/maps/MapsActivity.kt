@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.dicoding.doanda.storyapp.R
 import com.dicoding.doanda.storyapp.data.repository.Result
-import com.dicoding.doanda.storyapp.data.response.ListStoryItem
+import com.dicoding.doanda.storyapp.data.response.partials.ListStoryItem
 import com.dicoding.doanda.storyapp.databinding.ActivityMapsBinding
 import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 import com.google.android.gms.location.FusedLocationProviderClient

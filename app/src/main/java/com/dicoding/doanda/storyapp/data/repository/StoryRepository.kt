@@ -4,14 +4,22 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
+import androidx.paging.*
+import com.dicoding.doanda.storyapp.data.paging.StoryRemoteMediator
 import com.dicoding.doanda.storyapp.data.response.*
+import com.dicoding.doanda.storyapp.data.response.partials.ListStoryItem
+import com.dicoding.doanda.storyapp.data.source.database.StoryDatabase
 import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
 import com.dicoding.doanda.storyapp.data.source.local.UserEntity
 import com.dicoding.doanda.storyapp.data.source.remote.ApiService
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class StoryRepository (private val pref: SessionPreferences, private val apiService: ApiService) {
+class StoryRepository (
+    private val pref: SessionPreferences,
+    private val apiService: ApiService,
+    private val database: StoryDatabase,
+) {
 
     fun register(name: String, email: String, password: String) : LiveData<Result<RegisterResponse>> =
     liveData {
@@ -49,22 +57,19 @@ class StoryRepository (private val pref: SessionPreferences, private val apiServ
         pref.logout()
     }
 
-    // TODO PAGING
     fun getAllStories(
         token: String,
-        page: Int?,
-        size: Int?,
-        location: Int?,
-    ) : LiveData<Result<AllStoriesResponse>> =
-    liveData {
-        emit(Result.Loading)
-        try {
-            val response = apiService.getAllStories(token, page, size, location)
-            emit(Result.Success(response))
-        } catch (e: Exception) {
-            Log.e(TAG, "getAllStories ${e.message.toString()}")
-            emit(Result.Error(e.message.toString()))
-        }
+    ) : LiveData<PagingData<ListStoryItem>> {
+        @OptIn(ExperimentalPagingApi::class)
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5
+            ),
+            remoteMediator = StoryRemoteMediator(database, apiService, token),
+            pagingSourceFactory = {
+                database.storyDao().getAllStories()
+            }
+        ).liveData
     }
 
     fun getAllStoriesLocation(token: String, location: Int) : LiveData<Result<AllStoriesResponse>>
