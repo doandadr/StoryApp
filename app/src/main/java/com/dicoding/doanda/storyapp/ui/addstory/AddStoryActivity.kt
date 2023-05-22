@@ -17,15 +17,12 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
+import com.dicoding.doanda.storyapp.data.repository.Result
 import com.dicoding.doanda.storyapp.databinding.ActivityAddStoryBinding
-import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
 import com.dicoding.doanda.storyapp.ui.story.StoryActivity
 import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -38,19 +35,17 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
-
 class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddStoryBinding
-    private lateinit var addStoryViewModel: AddStoryViewModel
+    private val addStoryViewModel by viewModels<AddStoryViewModel> { ViewModelFactory.getInstance(this) }
 
-    private var getFile: File? = null
+    private var imageFile: File? = null
     private var lat: Float? = null
     private var lon:  Float? = null
     private var bearerToken: String? = null
     private lateinit var photoPath: String
-    private lateinit var fusedLoc: FusedLocationProviderClient
+    private lateinit var fusedLocProvider: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,9 +55,6 @@ class AddStoryActivity : AppCompatActivity() {
         supportActionBar?.title = "Add Story"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val pref = SessionPreferences.getInstance(dataStore)
-        addStoryViewModel = ViewModelProvider(this, ViewModelFactory(pref))
-            .get(AddStoryViewModel::class.java)
 
         if (!getPermissionStatus()) {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS_CODE)
@@ -71,13 +63,10 @@ class AddStoryActivity : AppCompatActivity() {
         addStoryViewModel.getUser().observe(this) { user ->
             if (user.isLoggedIn) {
                 bearerToken = user.bearerToken
+            } else {
+                Toast.makeText(this@AddStoryActivity, "User not logged in", Toast.LENGTH_SHORT).show()
             }
         }
-
-        addStoryViewModel.isLoading.observe(this) { isLoading ->
-            showLoading(isLoading)
-        }
-
         binding.btCamera.setOnClickListener { capturePhoto() }
         binding.btGallery.setOnClickListener { importGallery() }
 
@@ -129,25 +118,31 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun uploadStory() {
-        val file = getFile ?: return Toast.makeText(this, "Pick an Image", Toast.LENGTH_SHORT).show()
+        val file = imageFile ?: return Toast.makeText(this, "Pick an Image", Toast.LENGTH_SHORT).show()
         val reqImgFile = reduceImageSize(file).asRequestBody("image/*".toMediaTypeOrNull())
         val token = bearerToken ?: return Toast.makeText(this, "Token not found", Toast.LENGTH_SHORT).show()
         if (binding.edAddDescription.text.toString().isEmpty())
             return Toast.makeText(this, "Enter description", Toast.LENGTH_SHORT).show()
         val desc = "${binding.edAddDescription.text}".toRequestBody("text/plain".toMediaTypeOrNull())
         val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData("photo", file.name, reqImgFile)
-        addStoryViewModel.uploadStory(token, desc, imageMultipart, lat, lon)
-        addStoryViewModel.uploadStoryResponse.observe(this) { response ->
-            if (response?.error == true) {
-                Toast.makeText(this@AddStoryActivity, "Failed to add story", Toast.LENGTH_SHORT).show()
-            } else {
-                val intent = Intent(this@AddStoryActivity, StoryActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                Toast.makeText(this@AddStoryActivity, "Story Uploaded", Toast.LENGTH_SHORT).show()
-                finish()
+        addStoryViewModel.uploadStory(token, desc, imageMultipart, lat, lon).observe(this) { result ->
+            when (result) {
+                is Result.Success -> {
+                    showLoading(false)
+                    val intent = Intent(this@AddStoryActivity, StoryActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    Toast.makeText(this@AddStoryActivity, "Story Uploaded", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+                is Result.Loading -> showLoading(true)
+                is Result.Error -> {
+                    Toast.makeText(this@AddStoryActivity, result.error, Toast.LENGTH_SHORT).show()
+                    showLoading(false)
+                }
             }
         }
+
     }
     fun reduceImageSize(file: File): File {
         val bitmap = BitmapFactory.decodeFile(file.path)
@@ -163,10 +158,11 @@ class AddStoryActivity : AppCompatActivity() {
         bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
         return file
     }
+
     private fun getUserLocation() {
         if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLoc = LocationServices.getFusedLocationProviderClient(this)
-            fusedLoc.lastLocation.addOnSuccessListener { location: Location? ->
+            fusedLocProvider = LocationServices.getFusedLocationProviderClient(this)
+            fusedLocProvider.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     lat = location.latitude.toFloat()
                     lon = location.longitude.toFloat()
@@ -189,8 +185,8 @@ class AddStoryActivity : AppCompatActivity() {
     ) {
         if (it.resultCode == RESULT_OK) {
             val myFile = File(photoPath)
-            getFile = myFile
-            val result = BitmapFactory.decodeFile(getFile?.path)
+            imageFile = myFile
+            val result = BitmapFactory.decodeFile(imageFile?.path)
             binding.ivAddDetailPhoto.setImageBitmap(result)
         }
     }
@@ -201,7 +197,7 @@ class AddStoryActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             val selectedImg: Uri = result.data?.data as Uri
             val myFile = uriToFile(selectedImg, this)
-            getFile = myFile
+            imageFile = myFile
             binding.ivAddDetailPhoto.setImageURI(selectedImg)
         }
     }

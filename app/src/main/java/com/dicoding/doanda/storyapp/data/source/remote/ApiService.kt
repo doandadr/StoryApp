@@ -7,54 +7,53 @@ import com.dicoding.doanda.storyapp.data.response.StoryDetailResponse
 import com.dicoding.doanda.storyapp.data.response.UploadStoryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
 
     @FormUrlEncoded
     @POST("register")
-    fun register(
+    suspend fun register(
         @Field("name") name: String,
         @Field("email") email: String,
         @Field("password") password: String,
-    ): Call<RegisterResponse>
+    ): RegisterResponse
 
     @FormUrlEncoded
     @POST("login")
-    fun login(
+    suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String,
-    ): Call<LoginResponse>
+    ): LoginResponse
 
     @Multipart
     @POST("stories")
-    fun uploadStory(
+    suspend fun uploadStory(
         @Header("Authorization") token: String, 
         @Part("description") description: RequestBody,
         @Part file: MultipartBody.Part,
         @Part("lat") lat: Float?,
         @Part("lon") lon: Float?,
-    ): Call<UploadStoryResponse>
+    ): UploadStoryResponse
 
     @GET("stories")
-    fun getAllStories(
+    suspend fun getAllStories(
         @Header("Authorization") token: String, 
         @Query("page") page: Int?,
         @Query("size") size: Int?,
         @Query("location") location: Int?,
-    ): Call<AllStoriesResponse>
+    ): AllStoriesResponse
 
     @GET("stories")
-    fun getAllStoriesLocation(
+    suspend fun getAllStoriesLocation(
         @Header("Authorization") token: String, 
         @Query("location") location: Int,
-    ): Call<AllStoriesResponse>
+    ): AllStoriesResponse
 
     @GET("stories/{id}")
-    fun getStoryDetail(
+    suspend fun getStoryDetail(
         @Header("Authorization") token: String, 
         @Path("id") id : String,
-    ): Call<StoryDetailResponse>
+    ): StoryDetailResponse
 }
 

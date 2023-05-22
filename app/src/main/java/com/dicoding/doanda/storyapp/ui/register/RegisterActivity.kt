@@ -2,72 +2,29 @@ package com.dicoding.doanda.storyapp.ui.register
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
-import com.dicoding.doanda.storyapp.R
-import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.dicoding.doanda.storyapp.data.repository.Result
 import com.dicoding.doanda.storyapp.databinding.ActivityRegisterBinding
 import com.dicoding.doanda.storyapp.ui.login.LoginActivity
 import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
-
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
-    private lateinit var registerViewModel: RegisterViewModel
+    private val registerViewModel by viewModels<RegisterViewModel> { ViewModelFactory.getInstance(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val pref = SessionPreferences.getInstance(dataStore)
-        registerViewModel = ViewModelProvider(this, ViewModelFactory(pref))
-            .get(RegisterViewModel::class.java)
-
-        registerViewModel.registerResponse.observe(this) { registerResponse ->
-            if (registerResponse?.error == false) {
-                Toast.makeText(this@RegisterActivity, "Register successful", Toast.LENGTH_SHORT).show()
-
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
-            } else {
-                Toast.makeText(this@RegisterActivity, registerResponse?.message ?: "Email or password invalid", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        registerViewModel.isLoading.observe(this) { isLoading ->
-            showLoading(isLoading)
-        }
-
-        binding.btnRegister.setOnClickListener { view ->
-            if (view.id == R.id.btn_register) {
-                val name = binding.edRegisterName.text.toString()
-                val email = binding.edRegisterEmail.text.toString()
-                val password = binding.edRegisterPassword.text.toString()
-
-                registerViewModel.registerRequest(name, email, password)
-            }
-        }
-
-        binding.btnToLogin.setOnClickListener { view ->
-            if (view.id == R.id.btn_to_register) {
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
-            }
+        binding.btnRegister.setOnClickListener {
+            register()
         }
 
         binding.btnToLogin.setOnClickListener {
@@ -78,6 +35,30 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         playAnimation()
+    }
+
+    private fun register() {
+        val name = binding.edRegisterName.text.toString()
+        val email = binding.edRegisterEmail.text.toString()
+        val password = binding.edRegisterPassword.text.toString()
+
+        registerViewModel.register(name, email, password).observe(this) { result ->
+            when (result) {
+                is Result.Success -> {
+                    showLoading(false)
+                    Toast.makeText(this@RegisterActivity, "Register successful", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+                is Result.Loading -> showLoading(true)
+                is Result.Error -> {
+                    Toast.makeText(this@RegisterActivity, result.error, Toast.LENGTH_SHORT).show()
+                    showLoading(false)
+                }
+            }
+        }
     }
 
     private fun playAnimation() {

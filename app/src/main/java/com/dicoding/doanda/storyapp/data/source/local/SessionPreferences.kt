@@ -10,11 +10,6 @@ import kotlinx.coroutines.flow.map
 
 class SessionPreferences private constructor(private val dataStore: DataStore<Preferences>) {
 
-    private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
-    private val BEARER_TOKEN = stringPreferencesKey("bearer_token")
-    private val USER_NAME = stringPreferencesKey("name")
-
-
     fun getUser(): Flow<UserEntity> {
         return dataStore.data.map { preferences ->
             UserEntity(
@@ -24,7 +19,6 @@ class SessionPreferences private constructor(private val dataStore: DataStore<Pr
             )
         }
     }
-
     suspend fun saveUser(user: UserEntity) {
         dataStore.edit { preferences ->
             preferences[USER_NAME] = user.userName
@@ -32,7 +26,6 @@ class SessionPreferences private constructor(private val dataStore: DataStore<Pr
             preferences[BEARER_TOKEN] = user.bearerToken
         }
     }
-
     suspend fun logout() {
         dataStore.edit {
             it.clear()
@@ -42,6 +35,9 @@ class SessionPreferences private constructor(private val dataStore: DataStore<Pr
     companion object {
         @Volatile
         private var INSTANCE: SessionPreferences? = null
+        private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+        private val BEARER_TOKEN = stringPreferencesKey("bearer_token")
+        private val USER_NAME = stringPreferencesKey("name")
 
         fun getInstance(dataStore: DataStore<Preferences>): SessionPreferences {
             return INSTANCE ?: synchronized(this) {

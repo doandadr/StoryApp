@@ -2,74 +2,31 @@ package com.dicoding.doanda.storyapp.ui.login
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
-import com.dicoding.doanda.storyapp.R
-import com.dicoding.doanda.storyapp.ui.register.RegisterActivity
-import com.dicoding.doanda.storyapp.databinding.ActivityLoginBinding
-import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.dicoding.doanda.storyapp.data.repository.Result
 import com.dicoding.doanda.storyapp.data.source.local.UserEntity
+import com.dicoding.doanda.storyapp.databinding.ActivityLoginBinding
+import com.dicoding.doanda.storyapp.ui.register.RegisterActivity
 import com.dicoding.doanda.storyapp.ui.story.StoryActivity
 import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var loginViewModel: LoginViewModel
+    private val loginViewModel by viewModels<LoginViewModel> { ViewModelFactory.getInstance(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val pref = SessionPreferences.getInstance(dataStore)
-        loginViewModel = ViewModelProvider(this, ViewModelFactory(pref))
-            .get(LoginViewModel::class.java)
-
-        loginViewModel.loginResponse.observe(this) { loginResponse ->
-            if (loginResponse?.error == false) {
-                val user = UserEntity(
-                    loginResponse.loginResult?.name.toString(),
-                    true,
-                    "Bearer ${loginResponse.loginResult?.token}",
-                )
-                loginViewModel.saveUser(user)
-            } else {
-                Toast.makeText(this@LoginActivity, loginResponse?.message ?: "Email or password incorrect", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        loginViewModel.getUser().observe(this) { user ->
-            val bearerToken = user.bearerToken
-            if (bearerToken != "") {
-                Toast.makeText(this@LoginActivity, "Login succesful", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, StoryActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
-            }
-        }
-
-        loginViewModel.isLoading.observe(this) { isLoading ->
-            showLoading(isLoading)
-        }
-
-        binding.btnLogin.setOnClickListener { view ->
-            if (view.id == R.id.btn_login) {
-                val email = binding.edLoginEmail.text.toString()
-                val password = binding.edLoginPassword.text.toString()
-                loginViewModel.loginRequest(email, password)
-            }
+        binding.btnLogin.setOnClickListener {
+            login()
         }
 
         binding.btnToRegister.setOnClickListener {
@@ -80,6 +37,42 @@ class LoginActivity : AppCompatActivity() {
         }
 
         playAnimation()
+    }
+
+    private fun login() {
+        val email = binding.edLoginEmail.text.toString()
+        val password = binding.edLoginPassword.text.toString()
+
+        loginViewModel.login(email, password).observe(this) { result ->
+            when (result) {
+                is Result.Success -> {
+                    showLoading(false)
+                    val response = result.data
+                    val user = UserEntity(
+                        response.loginResult?.name.toString(),
+                        true,
+                        "Bearer ${response.loginResult?.token}",
+                    )
+                    loginViewModel.saveUser(user)
+                }
+                is Result.Loading -> showLoading(true)
+                is Result.Error -> {
+                    Toast.makeText(this@LoginActivity, result.error, Toast.LENGTH_SHORT).show()
+                    showLoading(false)
+                }
+            }
+
+            loginViewModel.getUser().observe(this) { user ->
+                val bearerToken = user.bearerToken
+                if (bearerToken != "") {
+                    Toast.makeText(this@LoginActivity, "Login succesful", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, StoryActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+        }
     }
 
     private fun playAnimation() {

@@ -1,21 +1,17 @@
 package com.dicoding.doanda.storyapp.ui.maps
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
 import com.dicoding.doanda.storyapp.R
+import com.dicoding.doanda.storyapp.data.repository.Result
 import com.dicoding.doanda.storyapp.data.response.ListStoryItem
-import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
 import com.dicoding.doanda.storyapp.databinding.ActivityMapsBinding
 import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -29,13 +25,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
-
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-    private lateinit var mapsViewModel: MapsViewModel
+    private val mapsViewModel by viewModels<MapsViewModel> { ViewModelFactory.getInstance(this) }
 
     private lateinit var fusedLoc: FusedLocationProviderClient
 
@@ -45,13 +39,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val pref = SessionPreferences.getInstance(dataStore)
-        mapsViewModel = ViewModelProvider(this, ViewModelFactory(pref))
-            .get(MapsViewModel::class.java)
+        supportActionBar?.title = "Story Map"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -63,7 +61,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMapToolbarEnabled = true
 
-        requestMapsData()
+        setMarkers()
         getMyLocation()
     }
 
@@ -97,14 +95,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-    private fun requestMapsData() {
+    private fun setMarkers() {
         mapsViewModel.getUser().observe(this) { user ->
             if (user.isLoggedIn) {
-                mapsViewModel.getAllStoriesLocation(user.bearerToken)
+                val locationInfo = 1
+                mapsViewModel.getAllStoriesLocation(user.bearerToken, locationInfo).observe(this) { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            showMarkers(result.data.listStory)
+                        }
+                        is Result.Loading -> {}
+                        is Result.Error -> {
+                            Toast.makeText(this@MapsActivity, result.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
-        }
-        mapsViewModel.listStory.observe(this) { listStory ->
-            showMarkers(listStory)
         }
     }
 

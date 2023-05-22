@@ -1,28 +1,23 @@
 package com.dicoding.doanda.storyapp.ui.storydetail
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.dicoding.doanda.storyapp.databinding.ActivityStoryDetailBinding
-import com.dicoding.doanda.storyapp.data.source.local.SessionPreferences
+import com.dicoding.doanda.storyapp.data.repository.Result
 import com.dicoding.doanda.storyapp.data.response.Story
+import com.dicoding.doanda.storyapp.databinding.ActivityStoryDetailBinding
 import com.dicoding.doanda.storyapp.ui.utils.factory.ViewModelFactory
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
 class StoryDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStoryDetailBinding
-    private lateinit var storyDetailViewModel: StoryDetailViewModel
+    private val storyDetailViewModel by viewModels<StoryDetailViewModel> { ViewModelFactory.getInstance(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,26 +28,28 @@ class StoryDetailActivity : AppCompatActivity() {
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val pref = SessionPreferences.getInstance(dataStore)
-
         val storyId = intent.getStringExtra(EXTRA_LIST_STORY_ITEM)
         if (storyId != null) {
-            storyDetailViewModel = ViewModelProvider(this, ViewModelFactory(pref))
-                .get(StoryDetailViewModel::class.java)
+            getStoryDetail(storyId)
         }
+    }
 
-        storyDetailViewModel.story.observe(this) {story ->
-            setStoryDetail(story)
-        }
-
-        storyDetailViewModel.isLoading.observe(this) {isLoading ->
-            showLoading(isLoading)
-        }
-
+    private fun getStoryDetail(storyId: String) {
         storyDetailViewModel.getUser().observe(this) {user ->
             if (user.isLoggedIn) {
-                if (storyId != null)
-                    storyDetailViewModel.loadStoryDetail(user.bearerToken, storyId)
+                storyDetailViewModel.getStoryDetail(user.bearerToken, storyId).observe(this) { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            showLoading(false)
+                            setStoryDetail(result.data.story)
+                        }
+                        is Result.Loading -> showLoading(true)
+                        is Result.Error -> {
+                            Toast.makeText(this@StoryDetailActivity, result.error, Toast.LENGTH_SHORT).show()
+                            showLoading(false)
+                        }
+                    }
+                }
             }
         }
     }
@@ -76,7 +73,6 @@ class StoryDetailActivity : AppCompatActivity() {
 
 
     private fun showLoading(isLoading: Boolean) {
-
         if (isLoading) {
             binding.progressBar.visibility = View.VISIBLE
         } else {
