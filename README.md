@@ -30,7 +30,7 @@ Here are the technologies and libraries used to create this project:
 
 ![WhatsApp Image 2023-12-28 at 11 40 55 PM](https://github.com/doandadr/StoryApp/assets/66405353/0226ff24-b027-4998-b003-8485dacc11e1)
 ![WhatsApp Image 2023-12-28 at 11 40 55 PM (1)](https://github.com/doandadr/StoryApp/assets/66405353/c028f919-ed18-46e6-a8b2-dc4de8c2c203)
-![WhatsApp Image 2023-12-28 at 11 40 55 PM (1)](https://github.com/doandadr/StoryApp/assets/66405353/022f1fbd-43c4-4210-9bbb-421e30b7d4bd)
+![WhatsApp Image 2023-12-28 at 11 40 56 PM](https://github.com/doandadr/StoryApp/assets/66405353/bf70ef88-875d-444b-befc-a2d5f3c0c979)
 ![WhatsApp Image 2023-12-28 at 11 40 56 PM (1)](https://github.com/doandadr/StoryApp/assets/66405353/04007760-dcad-4b36-81d5-c9f2eaa3baf4)
 ![WhatsApp Image 2023-12-28 at 11 40 56 PM (2)](https://github.com/doandadr/StoryApp/assets/66405353/f4567b55-6829-4bc7-ac5f-4ee25065f21f)
 
